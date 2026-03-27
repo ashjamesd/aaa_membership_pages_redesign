@@ -3,27 +3,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const lightboxImage = document.getElementById('lightbox-image');
   const lightboxScroll = document.getElementById('lightbox-scroll');
   const closeButton = document.querySelector('.lightbox-close');
-  const zoomInButton = document.getElementById('zoom-in');
-  const zoomOutButton = document.getElementById('zoom-out');
-  const zoomResetButton = document.getElementById('zoom-reset');
+  const zoomButton = document.getElementById('lightbox-zoom');
   const triggers = document.querySelectorAll('.image-trigger');
-
-  let zoomLevel = 1;
-
-  function applyZoom() {
-    lightboxImage.style.transform = `scale(${zoomLevel})`;
-  }
 
   function openLightbox(src, alt) {
     lightboxImage.src = src;
     lightboxImage.alt = alt;
-    zoomLevel = 1;
-    applyZoom();
     lightbox.classList.add('is-open');
     lightbox.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
+    lightboxScroll.classList.remove('is-zoomed');
     lightboxScroll.scrollTop = 0;
     lightboxScroll.scrollLeft = 0;
+    document.body.style.overflow = 'hidden';
   }
 
   function closeLightbox() {
@@ -31,8 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     lightbox.setAttribute('aria-hidden', 'true');
     lightboxImage.src = '';
     lightboxImage.alt = '';
-    zoomLevel = 1;
-    applyZoom();
+    lightboxScroll.classList.remove('is-zoomed');
     document.body.style.overflow = '';
   }
 
@@ -42,29 +32,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  if (zoomButton) {
+    zoomButton.addEventListener('click', () => {
+      lightboxScroll.classList.toggle('is-zoomed');
+    });
+  }
+
   if (closeButton) {
     closeButton.addEventListener('click', closeLightbox);
-  }
-
-  if (zoomInButton) {
-    zoomInButton.addEventListener('click', () => {
-      zoomLevel = Math.min(zoomLevel + 0.25, 4);
-      applyZoom();
-    });
-  }
-
-  if (zoomOutButton) {
-    zoomOutButton.addEventListener('click', () => {
-      zoomLevel = Math.max(zoomLevel - 0.25, 1);
-      applyZoom();
-    });
-  }
-
-  if (zoomResetButton) {
-    zoomResetButton.addEventListener('click', () => {
-      zoomLevel = 1;
-      applyZoom();
-    });
   }
 
   lightbox.addEventListener('click', (event) => {
@@ -78,16 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (event.key === 'Escape') {
       closeLightbox();
-    }
-
-    if (event.key === '+') {
-      zoomLevel = Math.min(zoomLevel + 0.25, 4);
-      applyZoom();
-    }
-
-    if (event.key === '-') {
-      zoomLevel = Math.max(zoomLevel - 0.25, 1);
-      applyZoom();
     }
   });
 });
